@@ -6,7 +6,7 @@ import tqdm
 from torch.utils.tensorboard import SummaryWriter
 
 from Dataset import ClassificationDataset
-from DiceLoss import dice_loss
+from Loss import dice_loss, iou_loss, dice_bce_loss, focal_loss, tversky_loss
 
 
 class Trainer:
@@ -113,7 +113,7 @@ class Trainer:
 
         print("VALIDATION: ")
         self.cur_val_loss = val_loss / len(val_dl)
-        print("DiceLoss: ", self.cur_val_loss)
+        print("Criterion: ", self.cur_val_loss)
 
     @staticmethod
     def _get_model(model_name):
@@ -158,6 +158,14 @@ class Trainer:
 
         if criterion_name == "DiceLoss":
             return dice_loss
+        if criterion_name == "IOU":
+            return iou_loss
+        if criterion_name == "DiceBCE":
+            return dice_bce_loss
+        if criterion_name == "FocalLoss":
+            return focal_loss
+        if criterion_name == "TverskyLoss":
+            return tversky_loss
         raise ValueError("{} isn't supported yet".format(criterion_name))
 
     @staticmethod

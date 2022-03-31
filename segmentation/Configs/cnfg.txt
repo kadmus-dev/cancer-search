@@ -1,7 +1,7 @@
 {
 "model_name": "unet",
 "optimizer": "Adam",  
-"criterion": "DiceLoss",
+"criterion": "IOU",
  
 "lr": 0.0001, 
 "weight_decay": 0.00001,
@@ -17,13 +17,13 @@
 "patience" : 5,
   
 "batch_size":8,
-"imsize" : 256, 
+"imsize" : 512,
 "num_workers": 6,
 
 "device": "cuda:0",
 "seed": 42,
  
-"unique_name": "th_U-net1", 
+"unique_name": "unet_iou_512_8",
 "output_directory": "results/",
 
 "data_path" : "data/",
