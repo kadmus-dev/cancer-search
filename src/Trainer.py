@@ -2,6 +2,7 @@ import os
 
 import segmentation_models_pytorch as smp
 import torch
+from datetime import datetime
 import tqdm
 from torch.utils.tensorboard import SummaryWriter
 
@@ -17,7 +18,8 @@ class Trainer:
 
         os.makedirs(self.cfg["output_directory"], exist_ok=True)
 
-        self.writer = SummaryWriter()
+        filename = cfg["unique_name"] + "_" + str(datetime.now().strftime("%y_%m_%d_%H_%M_%S"))
+        self.writer = SummaryWriter(log_dir=os.path.join("runs", filename))
         self.writer.add_text("Config", str(self.cfg), global_step=None, walltime=None)
 
         self.cur_train_loss = 0
@@ -50,15 +52,16 @@ class Trainer:
             print("Epoch : {}".format(epoch))
             self._train_one_epoch(epoch, model, train_dl, optimizer, criterion, scheduler)
 
-            torch.save(
-                model.state_dict(),
-                "{}/models/{}/{}_{}.pth".format(
-                    self.cfg["output_directory"],
-                    self.cfg["model_name"],
-                    self.cfg["unique_name"],
-                    epoch,
-                ),
-            )
+            if epoch % 20 == 0:
+                torch.save(
+                    model.state_dict(),
+                    "{}/models/{}/{}_{}.pth".format(
+                        self.cfg["output_directory"],
+                        self.cfg["model_name"],
+                        self.cfg["unique_name"],
+                        epoch,
+                    ),
+                )
 
             self._validate(epoch, model, val_dl, criterion, scheduler)
             self.writer.add_scalar('Accuracy/train', self.cur_train_loss, epoch)

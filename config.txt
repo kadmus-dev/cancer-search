@@ -23,7 +23,7 @@
 "device": "cuda:0",
 "seed": 42,
  
-"unique_name": "unet_iou_512_8",
+"unique_name": "unet_iou_is512_bs8",
 "output_directory": "results/",
 
 "data_path" : "data/",
