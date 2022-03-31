@@ -103,6 +103,7 @@ Temporary Items
 
 # Custom directories
 data/
+results/
 
 ### Python template
 # Byte-compiled / optimized / DLL files
