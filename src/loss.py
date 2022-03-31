@@ -1,20 +1,37 @@
-from torch import nn
-from torch.nn.functional import sigmoid
+import torch
+from torch.nn import functional as F
 
 
-class DiceLoss(nn.Module):
-    def __init__(self, weight=None, size_average=True):
-        super(DiceLoss, self).__init__()
-        self.weight = weight
-        self.size_average = size_average
+def dice_loss(y_true, y_pred, smooth=1):
+    y_pred = y_pred.view(-1)
+    y_true = y_true.view(-1)
+    return 1 - (2. * (y_true * y_pred).sum() + smooth) / (y_true.sum() + y_pred.sum() + smooth)
 
-    def forward(self, inputs, targets, smooth=1):
-        inputs = sigmoid(inputs)
 
-        inputs = inputs.view(-1)
-        targets = targets.view(-1)
+def iou_loss(y_true, y_pred, smooth=1):
+    y_pred = y_pred.view(-1)
+    y_true = y_true.view(-1)
+    intersection = (y_pred * y_true).sum()
+    return 1 - (intersection + smooth) / ((y_pred + y_true).sum() - intersection + smooth)
 
-        intersection = (inputs * targets).sum()
-        dice = (2. * intersection + smooth) / (inputs.sum() + targets.sum() + smooth)
 
-        return 1 - dice
+def dice_bce_loss(y_true, y_pred, smooth=1):
+    y_pred = y_pred.view(-1)
+    y_true = y_true.view(-1)
+    return F.binary_cross_entropy(y_pred, y_true, reduction='mean') + dice_loss(y_true, y_pred, smooth)
+
+
+def focal_loss(y_true, y_pred, smooth=1, alpha=0.8, gamma=2):
+    y_pred = y_pred.view(-1)
+    y_true = y_true.view(-1)
+    BCE = F.binary_cross_entropy(y_pred, y_true, reduction='mean')
+    return alpha * (1 - torch.exp(-BCE)) ** gamma * BCE
+
+
+def tversky_loss(y_true, y_pred, smooth=1, alpha=0.5, beta=0.5):
+    y_pred = y_pred.view(-1)
+    y_true = y_true.view(-1)
+    TP = (y_pred * y_true).sum()
+    FP = ((1 - y_true) * y_pred).sum()
+    FN = (y_true * (1 - y_pred)).sum()
+    return 1 - (TP + smooth) / (TP + alpha * FP + beta * FN + smooth)

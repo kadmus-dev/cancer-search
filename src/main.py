@@ -1,25 +1,24 @@
-import os
-from albumentations.core.serialization import from_dict
-from torch.utils.data import DataLoader
+import argparse
+import json
 
-from tissue_dataset import TissueDataset
-from model import SegmentationModel
-from utils import get_config, object_from_dict
-
-CONFIG_PATH = os.path.join("src", "config.yaml")
+from Trainer import Trainer
 
 
-def train():
-    cfg = get_config(CONFIG_PATH)
+def parse_args(args):
+    parser = argparse.ArgumentParser(description='Choose config: ')
+    parser.add_argument('config', type=str, default=None)
+    return parser.parse_args(args)
 
-    model = SegmentationModel(cfg)
-    train_augs = from_dict(cfg.train_augs)
-    ds = TissueDataset(cfg.img_dir, cfg.mask_dir, transforms=train_augs)
-    dl = DataLoader(ds, **cfg.train_dl_args)
 
-    trainer = object_from_dict(cfg.trainer)
-    trainer.fit(model, train_dataloaders=dl, val_dataloaders=dl)
+def main(args=None):
+    args = parse_args(args)
+
+    config = json.load(open(args.config))
+
+    trainer = Trainer(config)
+
+    trainer.train()
 
 
 if __name__ == '__main__':
-    train()
+    main()

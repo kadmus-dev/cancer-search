@@ -9,6 +9,6 @@
 
 
 ~~~
-python main.py Configs/cnfg.txt
+python src/main.py config.txt
 tensorboard --logdir runs
 ~~~
