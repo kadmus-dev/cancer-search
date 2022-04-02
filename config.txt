@@ -1,7 +1,7 @@
 {
 "model_name": "unet",
 "optimizer": "Adam",  
-"criterion": "IOU",
+"criterion": "DiceBCE",
  
 "lr": 0.0001, 
 "weight_decay": 0.00001,
@@ -16,14 +16,14 @@
 "sch_gamma" : 0.1,
 "patience" : 5,
   
-"batch_size":8,
+"batch_size":4,
 "imsize" : 512,
 "num_workers": 6,
 
 "device": "cuda:0",
 "seed": 42,
  
-"unique_name": "unet_iou_is512_bs8",
+"unique_name": "unet_diceBCE_is512_bs4",
 "output_directory": "results/",
 
 "data_path" : "data/",

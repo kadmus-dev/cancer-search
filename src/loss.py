@@ -18,13 +18,14 @@ def iou_loss(y_true, y_pred, smooth=1):
 def dice_bce_loss(y_true, y_pred, smooth=1):
     y_pred = y_pred.view(-1)
     y_true = y_true.view(-1)
-    return F.binary_cross_entropy(y_pred, y_true, reduction='mean') + dice_loss(y_true, y_pred, smooth)
+    return F.binary_cross_entropy_with_logits(y_pred.float(), y_true.float(), reduction='mean') + \
+           dice_loss(y_true, y_pred, smooth)
 
 
 def focal_loss(y_true, y_pred, smooth=1, alpha=0.8, gamma=2):
-    y_pred = y_pred.view(-1)
-    y_true = y_true.view(-1)
-    BCE = F.binary_cross_entropy(y_pred, y_true, reduction='mean')
+    y_pred = y_pred.view(-1).float()
+    y_true = y_true.view(-1).float()
+    BCE = F.binary_cross_entropy_with_logits(y_pred, y_true, reduction='mean')
     return alpha * (1 - torch.exp(-BCE)) ** gamma * BCE
 
 
