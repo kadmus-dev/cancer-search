@@ -1,4 +1,4 @@
-# cancer-search
+# Colorectal cancer cells segmentation on histological images
 
 [Task & data](https://codenrock.com/contests/hackhealth#/tasks/934/2186)  
 [Segmentation models](https://github.com/qubvel/segmentation_models.pytorch)  
